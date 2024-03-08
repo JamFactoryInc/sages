@@ -8,7 +8,7 @@ ENV PORT=$LISTENING_PORT
 WORKDIR /sages
 COPY . .
 
-RUN cargo build --locked --release
+RUN cargo build --release
 RUN cp ./target/release/$APP_NAME /bin/sages
 
 EXPOSE $LISTENING_PORT
