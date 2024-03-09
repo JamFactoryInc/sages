@@ -1,9 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <title>Sage's Portfolio</title>
+    <head>
+        <link rel="preconnect" href="style.css" crossorigin>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <section class="title-page">
+            
+            <div id="title-box">
+                <h1 id="title">Hey, I'm <span class="colour">Sage</span></h1>
+                <h3 id="subtitle">I'm a <span id="swap">Backend</span> Developer</h3>
+            </div>
+            
+        </section>
+        <section class="page">
 
-<body>
-    <div class="page">
-        <h1 id="title">Sage Smith</h1>
-    </div>
-    <h1 id="title">Sage Smith</h1>
-</body>
+        </section>
+        <h2 id="title">Experience</h2>
+    </body>
+</html>
+
+<style>
+    :root {
+        --primary: #6B8;
+        --secondary: #000;
+        --wheel: var(--primary);
+        --background: #111;
+        font-size: 1rem;
+        background-color: var(--background);
+    }
+
+    * {
+        color: #CCC;
+        font-family: Calibri, sans-serif;
+        letter-spacing: 0.05em;
+    }
+
+    #swap {
+        color: var(--background);
+        background-color: var(--wheel);
+        border-radius: 1rem;
+        padding: 0.5rem;
+    }
+
+    .colour {
+        color: var(--primary);
+    }
+
+    body {
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+        width: 100%;
+        text-align: left;
+        margin:0;
+    }
+
+    #title-box {
+        left:0;
+        width: 50%;
+        z-index: 1;
+        height: 25rem;
+        padding: 1rem;
+    }
+
+    #title-box * {
+        text-align: center;
+    }
+
+    .title-page {
+        height: 100vh;
+        width: 100vw;
+        background-color: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #title {
+        font-size: 500%;
+        padding-bottom: 2rem;
+    }
+
+    #subtitle {
+        color: rgb(167, 211, 185);
+        font-size: 300%;
+    }
+
+    
+</style>
 
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg">

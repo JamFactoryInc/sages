@@ -29,7 +29,7 @@ fn err(msg: &str) -> TokenStream {
 }
 
 fn read_html(location: &str) -> TokenStream {
-    let absolute_location = format!("{}/../page/{location}", env!("CARGO_MANIFEST_DIR"));
+    let absolute_location = format!("{}/../page/dist/{location}", env!("CARGO_MANIFEST_DIR"));
     let path = Path::new(&absolute_location);
     let mut file = match File::open(path) {
         Ok(file) => file,

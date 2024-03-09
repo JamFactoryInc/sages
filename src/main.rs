@@ -22,12 +22,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         let builder = http1::Builder::new();
-        let connection = async {
-            let tcp_stream = listener.accept();
-            let io = TokioIo::new(tcp_stream.await?.0);
-            
-            Result::<_, std::io::Error>::Ok(builder.serve_connection(io, service_fn(serve::serve)))
-        }.await?;
+        let tcp_stream = listener.accept();
+        let io = TokioIo::new(tcp_stream.await?.0);
+        let connection = builder.serve_connection(io, service_fn(serve::serve));
 
         // we aren't multithreaded but at least we can handle multiple non-blocking connections
         tokio::task::spawn(async move {
