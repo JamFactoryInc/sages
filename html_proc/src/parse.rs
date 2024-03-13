@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use minify_html::Cfg;
+
 use crate::template::HtmlTemplate;
 
 
@@ -15,10 +17,8 @@ struct ParseState {
 }
 
 pub fn parse_html(contents: String, embed_path: HashSet<String>) -> HtmlTemplate {
-    let mut state = HtmlParseState::Default;
-    let mut string = String::with_capacity(contents.len() * 2);
-    
-    HtmlTemplate::from(contents)
+    let minified = minify_html::minify(contents.as_bytes(), &Cfg::spec_compliant());
+    HtmlTemplate::from(String::from_utf8(minified).expect(""))
 }
 
 fn handle_default(state: &mut ParseState) {

@@ -1,5 +1,3 @@
-use std::{collections::HashSet, iter};
-
 use proc_macro::TokenStream;
 
 pub struct HtmlTemplate {

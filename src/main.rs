@@ -9,7 +9,7 @@ mod err;
 
 // Render expects binding to 0.0.0.0:8080
 const ADDRESS: [u8; 4] = [0, 0, 0, 0];
-const PORT: u16 = parse_u16(env!("PORT"));
+const PORT: u16 = parse_u16(env!("WEB_PORT"));
 
 const fn parse_u16(str: &'static str) -> u16 {
     if !str.is_ascii() {
@@ -26,12 +26,9 @@ const fn parse_u16(str: &'static str) -> u16 {
     val
 }
 
-
-
 // hosting platform only has 1 thread
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
- 
     let addr = SocketAddr::from((ADDRESS, PORT));
     let listener = TcpListener::bind(addr).await?;
 
