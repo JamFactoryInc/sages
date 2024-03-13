@@ -19,3 +19,4 @@ Cargo.lock
 /target
 /page/node_modules
 /page/dist
+.DS_Store

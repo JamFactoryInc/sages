@@ -1,14 +1,19 @@
 use preload::preload;
 use http_body_util::Full;
-use hyper::{body::{Bytes, Incoming}, header::{CONTENT_ENCODING, CONTENT_TYPE}, Request, Response};
+use hyper::{body::{Bytes, Incoming}, Request, Response};
 
 use crate::err::ServerError;
 
+use super::ContentType;
+
 pub async fn style(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, ServerError> {
-    Response::builder()
-        .status(200)
-        .header(CONTENT_TYPE, "text/css")
-        .header(CONTENT_ENCODING, "gzip")
-        .body(Full::new(Bytes::from_static(preload!("style.css"))))
+    super::ok(ContentType::Css)
+        .body(super::bytes(preload!("style.css")))
+        .map_err(|e| e.into())
+}
+
+pub async fn favicon(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, ServerError> {
+    super::ok(ContentType::Svg)
+        .body(super::bytes(preload!("favicon.svg")))
         .map_err(|e| e.into())
 }

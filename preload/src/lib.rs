@@ -1,10 +1,9 @@
-use std::{collections::HashSet, fs::File, hash::Hash, io::Read, path::Path};
+use std::{collections::HashSet, fs::File, io::Read, path::Path};
 
 use proc_macro::TokenStream;
-use template::HtmlTemplate;
 
 mod template;
-mod parse;
+mod processor;
 
 #[proc_macro]
 pub fn preload(stream: TokenStream) -> TokenStream {
@@ -21,19 +20,19 @@ pub fn preload(stream: TokenStream) -> TokenStream {
         return err(&err_msg)
     };
 
-    read_html(file_location)
+    embed(file_location)
 }
 
 fn err(msg: &str) -> TokenStream {
     format!("compile_error!(\"{}\")", msg.replace("\\", "\\\\").replace("\"", "\\\"")).parse().unwrap()
 }
 
-fn read_html(location: &str) -> TokenStream {
+fn embed(location: &str) -> TokenStream {
     let absolute_location = format!("{}/../page/{location}", env!("CARGO_MANIFEST_DIR"));
     let path = Path::new(&absolute_location);
     let mut file = match File::open(path) {
         Ok(file) => file,
-        Err(e) => return err(&absolute_location)
+        Err(_) => return err(&absolute_location)
     };
     
     let mut file_contents = String::new();
@@ -43,7 +42,7 @@ fn read_html(location: &str) -> TokenStream {
     
     let mut embed_path = HashSet::with_capacity(1);
     embed_path.insert(location.to_string());
-    let template = parse::parse_html(file_contents, embed_path);
+    let template = processor::process(path.extension(), file_contents, embed_path);
 
     template.as_token_stream()
 }

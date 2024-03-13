@@ -8,7 +8,7 @@ mod serve;
 mod err;
 
 const ADDRESS: [u8; 4] = [0, 0, 0, 0];
-const PORT: u16 = parse_u16("8080");
+const PORT: u16 = parse_u16(env!("WEB_PORT"));
 
 const fn parse_u16(str: &'static str) -> u16 {
     if !str.is_ascii() {
