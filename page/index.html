@@ -21,22 +21,11 @@
                 <button>Resume</button>
             </div>
             <div id="timeline">
+                <h2>Career</h2>
                 <span class="timeline-block" from="Apr 1, 2021" to="Jul 15, 2021" experience-name="InMarket Systems"></span>
                 <span class="timeline-block" from="Feb 28, 2022" to="" experience-name="Megaport"></span>
             </div>
         </section>
-        <section class="page">
-            <h2 id="title">Experience</h2>
-            <section>
-                <h2>JVM Developer - 2y 1m</h2>
-                <h3>Megaport Ltd</h3>
-            </section>
-            <section>
-                <h2>Junior Data Engineer - 4m</h2>
-                <h3>InMarket Systems</h3>
-            </section>
-        </section>
-        
     </body>
 </html>
 
@@ -104,6 +93,12 @@
         font-size: 300%;
     }
 
+    h2 {
+        position: absolute;
+        font-size: 300%;
+        margin-top: -7rem;
+    }
+
     #nav {
         width: 50%;
         display: flex;
@@ -133,31 +128,43 @@
     }
 
     #timeline {
+        margin-top: 5rem;
         width: 80vw;
         height: 5rem;
-        background-color: #0A0A0A;
-        padding: 1rem;
+        padding: 3rem 10vw;
+        background-color: #181818;
+        box-shadow: #0008 0 0 1rem;
     }
 
-    #timeline span {
+    #timeline span:not(.timeline-year) {
         position: absolute;
         background-color: var(--primary);
         font-size: 200%;
         color: #111;
         width: 0px;
         padding: 1rem 0;
-        border-radius: 0.5rem;
     }
 
-    #timeline span::after {
+    #timeline span:not(.timeline-year)::after {
         color: var(--primary);
         content: attr(experience-name);
         position: absolute;
         left: 0;
         bottom: -1.5em;
-        padding-left: 1rem;
-        border-left: solid 0.25rem var(--primary);
+        padding: 1rem 0 0 1rem;
+        border-left: dashed 0.25rem var(--primary);
         white-space: nowrap;
+    }
+
+    .timeline-year {
+        position: absolute;
+        color: #AAA !important;
+        margin-top: -2rem;
+    }
+    .timeline-year::after {
+        position: static;
+        content: attr(year);
+        margin-left: -50%;
     }
 
 </style>
