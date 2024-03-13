@@ -7,9 +7,8 @@ use tokio::net::TcpListener;
 mod serve;
 mod err;
 
-// Render expects binding to 0.0.0.0:8080
 const ADDRESS: [u8; 4] = [0, 0, 0, 0];
-const PORT: u16 = parse_u16(env!("WEB_PORT"));
+const PORT: u16 = parse_u16("8080");
 
 const fn parse_u16(str: &'static str) -> u16 {
     if !str.is_ascii() {

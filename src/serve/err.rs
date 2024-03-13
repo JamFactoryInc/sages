@@ -1,4 +1,4 @@
-use html_proc::html;
+use preload::preload;
 use http_body_util::Full;
 use hyper::{body::{Bytes, Incoming}, header::CONTENT_TYPE, Request, Response};
 
@@ -8,6 +8,6 @@ pub async fn not_found(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, Se
     Response::builder()
         .status(404)
         .header(CONTENT_TYPE, "text/html")
-        .body(Full::new(Bytes::from_static(html!("404.html"))))
+        .body(Full::new(Bytes::from_static(preload!("404.html"))))
         .map_err(|e| e.into())
 }

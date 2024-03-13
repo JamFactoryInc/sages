@@ -7,7 +7,7 @@ mod template;
 mod parse;
 
 #[proc_macro]
-pub fn html(stream: TokenStream) -> TokenStream {
+pub fn preload(stream: TokenStream) -> TokenStream {
     // stream should just be a file location relative to /page
     let stream_string = stream.to_string();
 

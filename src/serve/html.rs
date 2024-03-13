@@ -1,4 +1,4 @@
-use html_proc::html;
+use preload::preload;
 use http_body_util::Full;
 use hyper::{body::{Bytes, Incoming}, header::CONTENT_TYPE, Request, Response};
 
@@ -8,6 +8,6 @@ pub async fn home(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, ServerE
     Response::builder()
         .status(200)
         .header(CONTENT_TYPE, "text/html")
-        .body(Full::new(Bytes::from_static(html!("index.html"))))
+        .body(Full::new(Bytes::from_static(preload!("index.html"))))
         .map_err(|e| e.into())
 }

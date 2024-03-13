@@ -1,5 +1,5 @@
 [package]
-name = "html_proc"
+name = "preload"
 version = "0.1.0"
 edition = "2021"
 
