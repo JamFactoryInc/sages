@@ -1,13 +1,9 @@
 FROM alpine:3.14
 
-RUN apt-get update
-RUN apt-get install -y \
-    npm \
-    build-essential \
-    curl
+RUN apk add --update curl gcc npm 
 
 # set up rust
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+RUN curl -proto '=https' -tlsv1.2 -sSf https://sh.rustup.rs | sh
 ENV PATH="/root/.cargo/bin:/usr/local/bin/npm:${PATH}"
 
 # set up npx & webpack
