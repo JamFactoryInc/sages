@@ -6,11 +6,13 @@ use crate::err::ServerError;
 pub mod html;
 pub mod err;
 pub mod css;
+pub mod js;
 
 pub async fn serve(req: Request<Incoming>) -> Result<Response<Full<Bytes>>, ServerError> {
     match req.uri().path() {
         "" | "/" => Ok(html::home(req).await?),
         "/style.css" => Ok(css::style(req).await?),
+        "/index.js" => Ok(js::index(req).await?),
         "/favicon.svg" => Ok(css::favicon(req).await?),
         _ => Ok(err::not_found(req).await?)
     }
@@ -20,6 +22,7 @@ pub async fn serve(req: Request<Incoming>) -> Result<Response<Full<Bytes>>, Serv
 pub enum ContentType {
     Html,
     Css,
+    Js,
     Svg,
 }
 
@@ -27,6 +30,7 @@ pub fn get_response(content_type: ContentType) -> hyper::http::response::Builder
     let content_type_val = match content_type {
         ContentType::Html => "text/html",
         ContentType::Css => "text/css",
+        ContentType::Js => "text/javascript",
         ContentType::Svg => "image/svg+xml",
     };
     Response::builder()

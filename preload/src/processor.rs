@@ -8,7 +8,8 @@ use crate::template::HtmlTemplate;
 
 pub fn process(file_extension: Option<&OsStr>, contents: String, embed_path: HashSet<String>) -> HtmlTemplate {
     let minified = match file_extension.and_then(OsStr::to_str) {
-        Some("css" | "html" | "js") => {
+        // js is minified by webpack
+        Some("css" | "html") => {
             let mut minify_config = Cfg::spec_compliant();
             minify_config.minify_css = true;
             minify_config.minify_js = true;

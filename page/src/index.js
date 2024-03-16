@@ -1,9 +1,9 @@
 const parseDate = str => {
     let d = Date.parse(str);
     return isNaN(d) ? Date.now() : d;
-}
+};
 
-addEventListener("load", e => {
+addEventListener("DOMContentLoaded", e => {
     let timeLine = document.getElementById('timeline');
     let timelineBlocks = [...document.getElementsByClassName('timeline-block')];
 
@@ -32,7 +32,7 @@ addEventListener("load", e => {
             element: span.element,
             width_pct: (span.end - span.start) / timeLineDuration,
             offset_pct: (span.start - timelineStart) / timeLineDuration
-        }
+        };
     });
 
     let years = [];
@@ -52,18 +52,18 @@ addEventListener("load", e => {
         text: new Date(timelineStart).toLocaleString("default", { month: "short", year: "numeric" }),
         offset: 0
     }, {
-        text: "Today",
-        offset: 1
-    }].forEach(year => {
-        let element = document.createElement("span");
-        element.setAttribute("year", year.text);
-        element.className = "timeline-year";
-        timelineElement.appendChild(element);
-        years.push({
-            element: element,
-            offset_pct: year.offset,
-        })
-    })
+            text: "Today",
+            offset: 1
+        }].forEach(year => {
+            let element = document.createElement("span");
+            element.setAttribute("year", year.text);
+            element.className = "timeline-year";
+            timelineElement.appendChild(element);
+            years.push({
+                element: element,
+                offset_pct: year.offset,
+            });
+        });
 
     let onResize = e => {
         let computedStyle = getComputedStyle(timeLine);
@@ -77,9 +77,9 @@ addEventListener("load", e => {
             let year = years[i];
             year.element.style["margin-left"] = (timeLineWidth * year.offset_pct) + "px";
         }
-    }
+    };
 
     addEventListener("resize", onResize);
 
-    onResize()
+    onResize();
 });
