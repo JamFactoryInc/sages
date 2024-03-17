@@ -1,6 +1,6 @@
 FROM alpine:3.14
 
-RUN apk add --update curl gcc npm 
+RUN apk add --update curl bash gcc npm
 
 # set up rust
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
