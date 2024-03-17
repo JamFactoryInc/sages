@@ -3,7 +3,7 @@ FROM alpine:3.14
 RUN apk add --update curl gcc npm 
 
 # set up rust
-RUN curl -proto '=https' -tlsv1.2 -sSf https://sh.rustup.rs | sh
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:/usr/local/bin/npm:${PATH}"
 
 # set up npx & webpack
