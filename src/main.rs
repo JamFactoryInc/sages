@@ -9,7 +9,19 @@ mod err;
 mod support;
 
 const ADDRESS: [u8; 4] = [0, 0, 0, 0];
-const PORT: u16 = support::parse_u16(env!("WEB_PORT"));
+
+cfg_select! {
+    windows => {
+        const PORT: u16 = 8080;
+    }
+    target_arch = "aarch64" => {
+        const PORT: u16 = 8080;
+    }
+    _ => {
+        const PORT: u16 = support::parse_u16(env!("WEB_PORT"));
+    }
+}
+
 
 // hosting platform only has 1 thread
 #[tokio::main(flavor = "current_thread")]

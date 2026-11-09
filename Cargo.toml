@@ -9,3 +9,4 @@ tokio = { version = "1.36", features = ["macros", "net", "rt"] }
 http-body-util = "0.1"
 hyper-util = { version = "0.1.3", features = ["server", "tokio"] }
 preload = { path = "./preload" }
+redis="1.7.1"

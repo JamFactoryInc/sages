@@ -1,10 +1,16 @@
 use std::{env, fs::{self, File}, path::Path, process::Command};
 
-#[cfg(windows)]
-pub const NPX: &str = r"C:\Program Files\nodejs\npx.cmd";
-
-#[cfg(not(windows))]
-pub const NPX: &str = "/usr/local/bin/npx";
+cfg_select! {
+    windows => {
+        pub const NPX: &str = r"C:\Program Files\nodejs\npx.cmd";
+    }
+    target_arch = "aarch64" => {
+        pub const NPX: &str = "/opt/homebrew/bin/npx";
+    }
+    _ => {
+        pub const NPX: &str = "/usr/local/bin/npx";
+    }
+}
 
 fn main() {
     // ensure that dist is created, since it's not tracked in git
