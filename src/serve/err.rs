@@ -11,3 +11,11 @@ pub async fn not_found(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, Se
         .body(super::bytes(preload!("404.html")))
         .map_err(|e| e.into())
 }
+
+pub async fn method_not_allowed(_: Request<Incoming>) -> Result<Response<Full<Bytes>>, ServerError> {
+    Response::builder()
+        .status(405)
+        .header("Content-Type", "application/json")
+        .body(Full::new(Bytes::from(r#"{"error": "method not allowed"}"#)))
+        .map_err(|e| e.into())
+}
