@@ -134,9 +134,12 @@ fn host_masked(conn_str: &str) -> String {
 /// The table holds a single row with an auto-incrementing count value.
 pub async fn init_schema(pool: &Pool) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut conn = pool.get_conn().await?;
-    r#"CREATE DATABASE IF NOT EXISTS sages"#.ignore(&mut conn).await?;
-    r#"USE sages"#.ignore(&mut conn).await?;
-    println!("Database 'sages' ready.");
+    let db_name = MySqlConfig::from_env().database.unwrap_or_else(|| "sages".to_string());
+    let create_db = format!("CREATE DATABASE IF NOT EXISTS `{}`", db_name);
+    let use_db = format!("USE `{}`", db_name);
+    create_db.ignore(&mut conn).await?;
+    use_db.ignore(&mut conn).await?;
+    println!("Database '{}' ready.", db_name);
     r#"
         CREATE TABLE IF NOT EXISTS counter (
             id INT PRIMARY KEY DEFAULT 1,
