@@ -18,23 +18,23 @@ impl MySqlConfig {
     /// Load configuration from environment variables.
     ///
     /// Northflank injects these variables when you link a MySQL addon to a secret group:
-    /// - `MYSQL_JDBC_URI`: Full JDBC connection string (e.g., `jdbc:mysql://host:port/database`)
-    /// - `HOST`, `PORT`, `USERNAME`, `PASSWORD`, `DATABASE`: Individual connection details
+    /// - `DB_MYSQL_JDBC_URI`: Full JDBC connection string (e.g., `jdbc:mysql://host:port/database`)
+    /// - `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`: Individual connection details
     pub fn from_env() -> Self {
         Self {
-            uri: env::var("MYSQL_JDBC_URI").ok(),
-            host: env::var("HOST").ok(),
-            port: env::var("PORT")
+            uri: env::var("DB_MYSQL_JDBC_URI").ok(),
+            host: env::var("DB_HOST").ok(),
+            port: env::var("DB_PORT")
                 .ok()
                 .and_then(|p| p.parse().ok()),
-            username: env::var("USERNAME").ok(),
-            password: env::var("PASSWORD").ok(),
-            database: env::var("DATABASE").ok(),
+            username: env::var("DB_USERNAME").ok(),
+            password: env::var("DB_PASSWORD").ok(),
+            database: env::var("DB_DATABASE").ok(),
         }
     }
 
     /// Build a connection string from the configuration.
-    /// Prefers `MYSQL_JDBC_URI` if available, converting it from JDBC format; otherwise constructs from individual parts.
+    /// Prefers `DB_MYSQL_JDBC_URI` if available, converting it from JDBC format; otherwise constructs from individual parts.
     pub fn connection_string(&self) -> Option<String> {
         // Prefer the full JDBC URI if provided (Northflank default)
         if let Some(ref uri) = self.uri {
@@ -58,45 +58,22 @@ impl MySqlConfig {
 /// Initialize a MySQL connection pool from environment variables.
 /// Returns `None` if no MySQL configuration is found (graceful degradation for local dev).
 pub async fn init_pool() -> Option<Pool> {
-    let config = MySqlConfig::from_env();
-    
-    match config.connection_string() {
-        Some(conn_str) => {
-            init_pool_from_conn_str(&conn_str).await
-        }
-        None => {
+    let conn_str = MySqlConfig::from_env().connection_string()
+        .or_else(|| {
             println!("No MySQL configuration found. Skipping database connection.");
             None
-        }
-    }
+        })?;
+    init_pool_from_conn_str(&conn_str).await
 }
 
 /// Create a MySQL connection pool from a specific connection string.
 pub async fn init_pool_from_conn_str(conn_str: &str) -> Option<Pool> {
     println!("Connecting to MySQL: {}", host_masked(conn_str));
-
-    // Parse the connection string into Opts
-    let opts = match conn_str.parse::<mysql_async::Opts>() {
-        Ok(o) => o,
-        Err(e) => {
-            eprintln!("Invalid MySQL connection string: {}", e);
-            return None;
-        }
-    };
-
+    let opts = conn_str.parse::<mysql_async::Opts>().ok()?;
     let pool = Pool::new(opts);
-
-    // Test the connection
-    match pool.get_conn().await {
-        Ok(_conn) => {
-            println!("MySQL connection established successfully.");
-            Some(pool)
-        }
-        Err(e) => {
-            eprintln!("Failed to connect to MySQL: {}", e);
-            None
-        }
-    }
+    pool.get_conn().await.ok()?;
+    println!("MySQL connection established successfully.");
+    Some(pool)
 }
 
 /// Create a MySQL connection pool connected via Unix socket.
@@ -104,19 +81,15 @@ pub async fn init_pool_from_conn_str(conn_str: &str) -> Option<Pool> {
 /// the caller should use `mysql_local::wait_for_pool` to verify readiness.
 pub fn init_pool_from_socket(socket_path: &str) -> Option<Pool> {
     println!("Connecting to MySQL via socket: {}", socket_path);
-
-    let encoded_socket = urlencoding(socket_path);
-    let conn_str = format!("mysql://root@localhost/?socket={}", encoded_socket);
-
-    let opts: mysql_async::Opts = match conn_str.parse() {
-        Ok(o) => o,
-        Err(e) => {
-            eprintln!("Invalid MySQL socket connection string: {}", e);
-            return None;
-        }
-    };
-
+    let conn_str = socket_conn_str(socket_path);
+    let opts: mysql_async::Opts = conn_str.parse().ok()?;
     Some(Pool::new(opts))
+}
+
+/// Build a mysql_async connection string for a Unix socket path.
+fn socket_conn_str(socket_path: &str) -> String {
+    let encoded = urlencoding(socket_path);
+    format!("mysql://root@localhost/?socket={}", encoded)
 }
 
 /// Minimal URL encoder for socket paths (just encode slashes and special chars).
