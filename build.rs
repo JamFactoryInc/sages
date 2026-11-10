@@ -1,24 +1,47 @@
-use std::{env, fs::{self, File}, path::Path, process::Command};
+use std::{fs, process::Command};
 
 cfg_select! {
     windows => {
+        pub const NPM: &str = r"C:\Program Files\nodejs\npm.cmd";
         pub const NPX: &str = r"C:\Program Files\nodejs\npx.cmd";
     }
     target_arch = "aarch64" => {
+        pub const NPM: &str = "/opt/homebrew/bin/npm";
         pub const NPX: &str = "/opt/homebrew/bin/npx";
     }
     _ => {
+        pub const NPM: &str = "/usr/local/bin/npm";
         pub const NPX: &str = "/usr/local/bin/npx";
     }
 }
 
 fn main() {
     // ensure that dist is created, since it's not tracked in git
-    fs::create_dir("./page/dist").ok();
+    fs::create_dir_all("./page/dist").ok();
 
-    let mut cmd = Command::new(NPX);
-    cmd.arg("webpack")
+    // Install node dependencies
+    let npm_status = Command::new(NPM)
+        .arg("install")
         .current_dir("./page")
-        .spawn()
-        .expect("failed to execute process");
+        .status()
+        .expect("failed to execute npm install");
+
+    if !npm_status.success() {
+        panic!("npm install failed with status: {}", npm_status);
+    }
+
+    // Build the frontend with webpack
+    let status = Command::new(NPX)
+        .arg("webpack")
+        .current_dir("./page")
+        .status()
+        .expect("failed to execute webpack");
+
+    if !status.success() {
+        panic!("webpack build failed with status: {}", status);
+    }
+
+    // Tell Cargo to re-run build script if page source changes
+    println!("cargo:rerun-if-changed=page/src");
+    println!("cargo:rerun-if-changed=page/package.json");
 }
