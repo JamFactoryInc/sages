@@ -5,13 +5,15 @@ cfg_select! {
         pub const NPM: &str = r"C:\Program Files\nodejs\npm.cmd";
         pub const NPX: &str = r"C:\Program Files\nodejs\npx.cmd";
     }
-    target_arch = "aarch64" => {
+    macos => {
+        // On macOS, prefer homebrew path; falls back to PATH lookup if not found
         pub const NPM: &str = "/opt/homebrew/bin/npm";
         pub const NPX: &str = "/opt/homebrew/bin/npx";
     }
     _ => {
-        pub const NPM: &str = "/usr/local/bin/npm";
-        pub const NPX: &str = "/usr/local/bin/npx";
+        // Linux: rely on PATH (Alpine installs npm at /usr/bin/npm)
+        pub const NPM: &str = "npm";
+        pub const NPX: &str = "npx";
     }
 }
 
